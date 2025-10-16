@@ -1,4 +1,5 @@
 # Unity .gitignore
+# Unity generated folders
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -7,8 +8,48 @@
 [Ll]ogs/
 UserSettings/
 MemoryCaptures/
+
+# Visual Studio / VS Code / Rider
 .vs/
-.idea/
 .vscode/
+.idea/
+
+# Autres fichiers systèmes
 .DS_Store
 Thumbs.db
+
+# Unity specific
+*.csproj
+*.unityproj
+*.sln
+*.user
+*.pidb
+*.booproj
+*.svd
+
+# Cache et compilation
+*.pdb
+*.mdb
+*.opendb
+*.svd
+*.apk
+*.aab
+*.xcodeproj
+*.xcworkspace
+*.xcuserdata
+*.pidb
+*.suo
+*.userprefs
+*.prefs
+*.asmdef.meta
+
+# Auto-generated Asset Store tools
+AssetStoreTools*
+
+# Crash reports
+CrashReport*
+
+# Gradle / Android
+*.gradle
+*.keystore
+
