@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 397146162596681137}
   - component: {fileID: -3041430653606091107}
   - component: {fileID: 4032809557486154650}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Nightmare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.3124703, y: 2.267154, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -102,10 +102,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51c231672130d0e4492e6f9d5b728181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 4929599275856723896, guid: a94bca6a310b263428e0c90373ca6954, type: 3}
+  player: {fileID: 0}
   chase: 5
   stop: 6
   speed: 2
+  space: 1
+  rb: {fileID: -3041430653606091107}
 --- !u!50 &-3041430653606091107
 Rigidbody2D:
   serializedVersion: 5
@@ -119,7 +121,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 1.5
   m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -131,7 +133,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!58 &4032809557486154650
 CircleCollider2D:
@@ -168,4 +170,4 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.7
+  m_Radius: 0.5
