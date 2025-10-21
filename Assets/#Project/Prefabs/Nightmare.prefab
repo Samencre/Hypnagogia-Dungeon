@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51c231672130d0e4492e6f9d5b728181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 799269657884922758, guid: 69367876a432e3d47ad3ea9d83fb6812, type: 3}
   chase: 5
   stop: 6
   speed: 2
