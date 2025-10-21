@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 397146162596681137}
   - component: {fileID: -3041430653606091107}
   - component: {fileID: 4032809557486154650}
+  - component: {fileID: -888845778027207292}
   m_Layer: 8
   m_Name: Nightmare
   m_TagString: Untagged
@@ -102,7 +103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51c231672130d0e4492e6f9d5b728181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 799269657884922758, guid: 69367876a432e3d47ad3ea9d83fb6812, type: 3}
+  player: {fileID: 0}
   chase: 5
   stop: 6
   speed: 2
@@ -171,3 +172,18 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &-888845778027207292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5112148080668412031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a15043c788608654b8a2e9ccc02322d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 1.5
+  damage: 1
+  player: {fileID: 0}

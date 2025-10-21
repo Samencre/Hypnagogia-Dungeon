@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour
+public class NightmareHealth : MonoBehaviour
 {
-    public int maxHealth = 5;      
+    public int maxHealth = 1;      
     [SerializeField] private int currentHealth;
     public bool IsALive = true;   
 
@@ -28,16 +28,9 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    public void Die()
+    void Die()
     {
-        Debug.Log("Tu es mort !");
-        // Animation de mort + Game Over
+        Debug.Log("Nightmare detruit !");
+        // Animation de mort + destruction
     }
-
-    public void Heal(int heal)
-    {
-        currentHealth += heal;
-        if (currentHealth > maxHealth) currentHealth = maxHealth;
-    }
-
 }
