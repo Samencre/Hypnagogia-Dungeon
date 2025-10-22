@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2152655455106633170}
   - component: {fileID: 5440160980342268317}
   - component: {fileID: 4729926938051184646}
+  - component: {fileID: -2648747391981813492}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -168,6 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 3
   rb: {fileID: 4380670235441403618}
+  playerHealth: {fileID: 4729926938051184646}
 --- !u!114 &4729926938051184646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -182,3 +184,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 5
   currentHealth: 5
+  IsALive: 1
+--- !u!114 &-2648747391981813492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2462970303965439378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c873e1f9570195c4b9fa18ea2fde014e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 1.5
+  damageAttack: 1
+  damageCry: 2
+  nightmare: {fileID: 0}

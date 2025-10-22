@@ -6,10 +6,13 @@ public class NightmareAttack : MonoBehaviour
     public int damage = 1;
     public Transform player;
     private PlayerHealth playerHealth;
+    public float maxTime = 3f;
+    public float currentTime;
+    public bool attack = false;
 
     void Start()
     {
-        playerHealth = player.GetComponent<PlayerHealth>();
+       playerHealth = player.GetComponent<PlayerHealth>(); 
     }
 
     void Update()
@@ -19,6 +22,7 @@ public class NightmareAttack : MonoBehaviour
             if (Vector2.Distance(transform.position, player.position) <= attackRange)
             {
                 PerformAttack();
+                attack = true;
             }
             
         }
@@ -26,7 +30,21 @@ public class NightmareAttack : MonoBehaviour
 
     void PerformAttack()
     {
-        playerHealth.TakeDamage(damage);
+        if (attack == true)
+        {
+            currentTime += Time.deltaTime;
+            if (currentTime >= maxTime)
+            {
+                playerHealth.TakeDamage(damage);
+                currentTime = 0;
+            }
+        }
+        else currentTime = 0;
     }
+                
+            
+    
+        
+    
 }
 
