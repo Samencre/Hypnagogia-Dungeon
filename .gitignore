@@ -10,7 +10,7 @@ UserSettings/
 MemoryCaptures/
 
 # Visual Studio / VS Code / Rider
-.vs/
+
 .vscode/
 .idea/
 

@@ -2,15 +2,18 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int maxHealth = 5;      
+    public int maxHealth = 8;      
     [SerializeField] private int currentHealth;
-    public bool IsALive = true;   
+    public bool IsALive = true;
+    public Transform healthbarUI;
+    public GameObject hpPrefab;
 
     void Awake()
     {
         currentHealth = maxHealth;
+        UpdateHealtbarUI();
     }
-    
+
 
     public void TakeDamage(int damage)
     {
@@ -25,6 +28,21 @@ public class PlayerHealth : MonoBehaviour
                 Die();
             }
 
+        }
+
+        UpdateHealtbarUI();
+    }
+    
+public void UpdateHealtbarUI()
+    {
+        foreach (Transform child in healthbarUI)
+        {
+            Destroy(child.gameObject);
+        }
+        
+        for (int i = 0; i < currentHealth; i++)
+        {
+            Instantiate(hpPrefab, healthbarUI);
         }
     }
 
