@@ -4,11 +4,12 @@ public class NightmareHealth : MonoBehaviour
 {
     public int maxHealth = 8;      
     [SerializeField] private int currentHealth;
-    public bool IsALive = true;   
+    public bool IsALive = true;
 
     void Awake()
     {
         currentHealth = maxHealth;
+        IsALive = true;
     }
     
 

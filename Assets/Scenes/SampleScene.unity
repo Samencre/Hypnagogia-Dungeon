@@ -8111,6 +8111,11 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!1 &278754612 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5112148080668412031, guid: a5167db296861934eb2649e8abf06d03, type: 3}
+  m_PrefabInstance: {fileID: 790610836}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &496630670 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8955822202827864931, guid: 3ebb697a19a59c94a8926b6e102d814b, type: 3}
@@ -20990,13 +20995,17 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1385185207}
+    - target: {fileID: 397146162596681137, guid: a5167db296861934eb2649e8abf06d03, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 592662575418360432, guid: a5167db296861934eb2649e8abf06d03, type: 3}
       propertyPath: m_SortingOrder
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 931645877250799072, guid: a5167db296861934eb2649e8abf06d03, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.23
+      value: 6.34
       objectReference: {fileID: 0}
     - target: {fileID: 931645877250799072, guid: a5167db296861934eb2649e8abf06d03, type: 3}
       propertyPath: m_LocalPosition.y
@@ -21038,10 +21047,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Nightmare
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 397146162596681137, guid: a5167db296861934eb2649e8abf06d03, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5112148080668412031, guid: a5167db296861934eb2649e8abf06d03, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1715998696}
   m_SourcePrefab: {fileID: 100100000, guid: a5167db296861934eb2649e8abf06d03, type: 3}
 --- !u!1 &884099112
 GameObject:
@@ -21569,8 +21582,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 20, y: -20}
-  m_SizeDelta: {x: 18, y: 18}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 800, y: 100}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &1214568328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21590,8 +21603,8 @@ MonoBehaviour:
     m_Bottom: 0
   m_ChildAlignment: 3
   m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
@@ -26637,6 +26650,35 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 931645877250799072, guid: a5167db296861934eb2649e8abf06d03, type: 3}
   m_PrefabInstance: {fileID: 790610836}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1715998696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278754612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc51ed1d4ceaf1b44914a800fc522d8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tileWidth: 1
+  tileHeight: 1
+  groundTilemap: {fileID: 552265375}
+  newPath: 0
+  pathGenerated: 0
+  nightmare: {fileID: 1715998689}
+  player: {fileID: 1385185207}
+  ground: {fileID: 552265373}
+  chase: 4
+  stop: 5
+  speed: 2
+  rb: {fileID: 1715998701}
+--- !u!50 &1715998701 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: -3041430653606091107, guid: a5167db296861934eb2649e8abf06d03, type: 3}
+  m_PrefabInstance: {fileID: 790610836}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1720720242
 GameObject:
   m_ObjectHideFlags: 0
@@ -26913,7 +26955,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1214568327}
-  m_Father: {fileID: 1953952573}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -26949,10 +26991,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
-  m_ReferencePixelsPerUnit: 100
+  m_UiScaleMode: 1
+  m_ReferencePixelsPerUnit: 32
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -27067,8 +27109,7 @@ Transform:
   m_LocalPosition: {x: 1.8736131, y: 0.38891757, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1924306033}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2044421869
@@ -27358,14 +27399,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8955822202827864931, guid: 3ebb697a19a59c94a8926b6e102d814b, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 18
-      objectReference: {fileID: 0}
-    - target: {fileID: 8955822202827864931, guid: 3ebb697a19a59c94a8926b6e102d814b, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 18
-      objectReference: {fileID: 0}
-    - target: {fileID: 8955822202827864931, guid: 3ebb697a19a59c94a8926b6e102d814b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -27492,5 +27525,6 @@ SceneRoots:
   - {fileID: 1807811515066227090}
   - {fileID: 8507432283981376234}
   - {fileID: 790610836}
+  - {fileID: 1924306033}
   - {fileID: 1953952573}
   - {fileID: 1731515874}

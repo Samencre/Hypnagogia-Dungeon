@@ -13,7 +13,7 @@ public class PlayerMove : MonoBehaviour
         {
             movement.x = Input.GetAxisRaw("Horizontal"); 
             movement.y = Input.GetAxisRaw("Vertical");
-
+            Debug.Log("Player move");
             movement = movement.normalized;
             
         }

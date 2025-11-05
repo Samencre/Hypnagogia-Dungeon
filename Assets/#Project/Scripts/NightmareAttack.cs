@@ -37,6 +37,7 @@ public class NightmareAttack : MonoBehaviour
             {
                 playerHealth.TakeDamage(damage);
                 currentTime = 0;
+                Debug.Log("Nightmare touche");
             }
         }
         else currentTime = 0;

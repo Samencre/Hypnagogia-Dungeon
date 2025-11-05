@@ -11,6 +11,7 @@ public class PlayerHealth : MonoBehaviour
     void Awake()
     {
         currentHealth = maxHealth;
+        IsALive = true;
         UpdateHealtbarUI();
     }
 
@@ -20,6 +21,7 @@ public class PlayerHealth : MonoBehaviour
         if (IsALive)
         {
             currentHealth -= damage;
+            Debug.Log("Player toucher");
             if (currentHealth < 0) currentHealth = 0;
 
             if (currentHealth == 0)
