@@ -1153,11 +1153,11 @@ PrefabInstance:
       objectReference: {fileID: 1715998689}
     - target: {fileID: 799269657884922758, guid: 69367876a432e3d47ad3ea9d83fb6812, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.37
+      value: 0.53
       objectReference: {fileID: 0}
     - target: {fileID: 799269657884922758, guid: 69367876a432e3d47ad3ea9d83fb6812, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.77
+      value: 4.05
       objectReference: {fileID: 0}
     - target: {fileID: 799269657884922758, guid: 69367876a432e3d47ad3ea9d83fb6812, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1503,6 +1503,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc51ed1d4ceaf1b44914a800fc522d8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gridWidth: 0
+  gridHeight: 0
   tileWidth: 1
   tileHeight: 1
   groundTilemap: {fileID: 552265375}

@@ -1,11 +1,13 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Tilemaps;
 
 public class Pathfinding : MonoBehaviour
 {
-    private int gridWidth;
-    private int gridHeight;
+    [SerializeField] private int gridWidth;
+    [SerializeField] private int gridHeight;
     [SerializeField] private int tileWidth = 1;
     [SerializeField] private int tileHeight = 1;
     [SerializeField] private Tilemap groundTilemap;
@@ -22,8 +24,14 @@ public class Pathfinding : MonoBehaviour
     public float chase = 4f;    
     public float stop = 5f;     
     public float speed = 2f;  
-    public Rigidbody2D rb;    
+    public Rigidbody2D rb;
     private bool isChasing = false;
+    [SerializeField] private bool visualiseGrid;
+    [SerializeField] private bool showTexts;
+
+    [SerializeField] private Transform textPrefab;
+    [SerializeField] private Transform textParent;
+
 
     void Awake()
     {
@@ -32,8 +40,16 @@ public class Pathfinding : MonoBehaviour
     }
 
     private void Update()
+
     {
+
         Debug.Log("Cible du Nightmare: " + player.name);
+        // Debug.Log($"player position: {player.transform.position}");
+        // Debug.Log($"map size: {groundTilemap.size}");
+        // Debug.Log($"cell size: {groundTilemap.cellSize}");
+
+        // Debug.Log($"player cell: {groundTilemap.layoutGrid.WorldToCell(player.transform.position)}");
+
         if (player == null) return;
 
         float distance = Vector2.Distance(transform.position, player.position);
@@ -59,14 +75,19 @@ public class Pathfinding : MonoBehaviour
                 GenerateGrid();
                 Vector3Int playerGridPos = groundTilemap.layoutGrid.WorldToCell(player.position) - groundTilemap.origin;
                 Vector3Int nightmareGridPos = groundTilemap.layoutGrid.WorldToCell(nightmare.position) - groundTilemap.origin;
-                // Debug.Log($"[Pathfinding] player cell={playerGridPos} | nightmare cell={nightmareGridPos}");
-                // Debug.Log($"[Pathfinding] origin={groundTilemap.origin}");
+
 
                 FindPath(new Vector2(nightmareGridPos.x, nightmareGridPos.y),
                          new Vector2(playerGridPos.x, playerGridPos.y));
 
                 newPath = false;
                 pathGenerated = true;
+
+                 if (showTexts)
+                {
+                    VisualiseText();
+                }
+
             }
             else if (!newPath)
             {
@@ -142,9 +163,11 @@ public class Pathfinding : MonoBehaviour
                 {
                     finalPath.Add(pathTile.position);
                     pathTile = tiles[pathTile.connection];
+                    
                 }
 
                 finalPath.Add(startPos);
+                VisualiseText();
  
                 Debug.Log($"Chemin trouvé ! Longueur : {finalPath.Count}");
 
@@ -187,5 +210,42 @@ public class Pathfinding : MonoBehaviour
             }
         }
     }
- 
+    private void VisualiseText()
+    {
+        foreach (Transform child in textParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Vector2 pos in tiles.Keys)
+        {
+            Transform text = Instantiate(textPrefab, pos + (Vector2)transform.position, new Quaternion(), textParent);
+            text.GetChild(0).GetComponent<Text>().text = tiles[pos].distanceFromStart.ToString();       
+            text.GetChild(1).GetComponent<Text>().text = tiles[pos].estimatedDistanceToEnd.ToString();   
+            text.GetChild(2).GetComponent<Text>().text = tiles[pos].totalEstimatedDistance.ToString();   
+        }
+    }
+    
+     private void OnDrawGizmos()
+    {
+        if (!visualiseGrid || tiles == null)
+        {
+            return;
+        }
+
+        foreach (KeyValuePair<Vector2, Tile> kvp in tiles)
+        {
+
+            if (finalPath.Contains(kvp.Key))
+            {
+                Gizmos.color = Color.magenta;
+            }
+
+            float gizmoSize = showTexts ? 0.2f : 1;
+
+            Gizmos.DrawCube(kvp.Key + (Vector2)transform.position, new Vector3(tileWidth, tileHeight) * gizmoSize);
+        }
+    }
+
+
 }
