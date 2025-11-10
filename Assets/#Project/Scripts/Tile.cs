@@ -5,7 +5,8 @@ public class Tile
 {
     public Vector2 position;
     public Vector2 connection;
-    public float distanceFromStart = float.MaxValue;
+    public float distanceFromStart;
+    // = float.MaxValue (autre possibiliter a Mathf.Infinity ou null)
     public float estimatedDistanceToEnd;
     public float totalEstimatedDistance;
 

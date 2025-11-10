@@ -1,109 +1,122 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Tilemaps;
+using System.Collections;
+using UnityEngine.UI;
 
-public class Pathfinding : MonoBehaviour
-{
+public class Pathfinding : MonoBehaviour {
+    [SerializeField] private bool newCaculPath;
+    [SerializeField] private bool pathGenerated;
     [SerializeField] private int gridWidth;
     [SerializeField] private int gridHeight;
     [SerializeField] private int tileWidth = 1;
     [SerializeField] private int tileHeight = 1;
     [SerializeField] private Tilemap groundTilemap;
-    [SerializeField] private bool newPath;
-    [SerializeField] private bool pathGenerated;
     private Dictionary<Vector2, Tile> tiles;
+    // Tuiles navigables
     private List<Vector2> tilesToSearch;
+    // Liste ouverte (a explorer)
     private List<Vector2> searchedTiles;
-    private List<Vector2> finalPath;
+    // Liste fermer (deja explorées)
+    private List<Vector2> finalPathFind;
+    
+
+
     public Transform nightmare;
     public Transform player;
-    public Transform ground;
+    public float distanceStartChase = 4f;
+    public float distanceStopChase = 5f;
+    public float speedMovement = 2f;
+    public Rigidbody2D rbNightmare;
 
-    public float chase = 4f;    
-    public float stop = 5f;     
-    public float speed = 2f;  
-    public Rigidbody2D rb;
     private bool isChasing = false;
+    private Coroutine followCoroutine; 
+    // Coroutine qui active le deplacement
+    
+
     [SerializeField] private bool visualiseGrid;
     [SerializeField] private bool showTexts;
-
     [SerializeField] private Transform textPrefab;
-    [SerializeField] private Transform textParent;
-
-
+    [SerializeField] private Transform textParent; 
+    
+    
     void Awake()
     {
         gridWidth = groundTilemap.size.x;
         gridHeight = groundTilemap.size.y;
+        // Recupere la taille de la tilemap
     }
-
+    
+    
     private void Update()
-
     {
+        if (player == null || nightmare == null) return;
+        // verification d'assignation
 
-        Debug.Log("Cible du Nightmare: " + player.name);
-        // Debug.Log($"player position: {player.transform.position}");
-        // Debug.Log($"map size: {groundTilemap.size}");
-        // Debug.Log($"cell size: {groundTilemap.cellSize}");
+        float distanceBetweenPlayerNightmare = Vector2.Distance(nightmare.position, player.position);
 
-        // Debug.Log($"player cell: {groundTilemap.layoutGrid.WorldToCell(player.transform.position)}");
-
-        if (player == null) return;
-
-        float distance = Vector2.Distance(transform.position, player.position);
-
-        if (!isChasing && distance < chase)
+        // Player entre dans la zone de poursuite
+        if (!isChasing && distanceBetweenPlayerNightmare < distanceStartChase)
         {
             isChasing = true;
-            newPath = true;
+            newCaculPath = true;
+
         }
-        else if (isChasing && distance > stop)
+        // Playeur sort de la zone de poursuite
+        else if (isChasing && distanceBetweenPlayerNightmare > distanceStopChase)
         {
             isChasing = false;
-            newPath = false; 
-        }
+            newCaculPath = false;
 
+            // Arrete la coroutine de suivi si elle est active
+            if (followCoroutine != null)
+            {
+                StopCoroutine(followCoroutine);
+                followCoroutine = null;
+            }
+        }
+    
+    
+        // COMPREND PAS tout, faut decoriquer plus !!!!!!!!!!!
         if (isChasing)
         {
-            Debug.Log("Chassing");
-
-            if (newPath && !pathGenerated)
+            // Un nouveau chemin doit etre calculer
+            if (newCaculPath && !pathGenerated)
             {
-                Debug.Log("NewPath");
-                GenerateGrid();
+                GenerateGrid(); 
+                // Reconstruit la grille a partir de la tilemap
+                
                 Vector3Int playerGridPos = groundTilemap.layoutGrid.WorldToCell(player.position) - groundTilemap.origin;
                 Vector3Int nightmareGridPos = groundTilemap.layoutGrid.WorldToCell(nightmare.position) - groundTilemap.origin;
+                // Conversion des positions monde en cellules (pas encore tres claire...)
 
+                FindPath(new Vector2(nightmareGridPos.x, nightmareGridPos.y), new Vector2(playerGridPos.x, playerGridPos.y));
+                // Calcul du chemin A* (pas claire non plus....)
 
-                FindPath(new Vector2(nightmareGridPos.x, nightmareGridPos.y),
-                         new Vector2(playerGridPos.x, playerGridPos.y));
-
-                newPath = false;
-                pathGenerated = true;
-
-                 if (showTexts)
+                
+                if (finalPathFind != null && finalPathFind.Count > 0)
                 {
-                    VisualiseText();
+                    // Stoppe l'ancienne coroutine avant d’en lancer une nouvelle
+                    if (followCoroutine != null) StopCoroutine(followCoroutine);
+                    followCoroutine = StartCoroutine(FollowPath());
                 }
-
+    
+                newCaculPath = false;
+                pathGenerated = true;
             }
-            else if (!newPath)
+            else if (!newCaculPath)
             {
                 pathGenerated = false;
             }
-            
         }
-
-
     }
-
-
+    
+    
     private void GenerateGrid()
     {
+        // Parcourt toutes les cellules de la tilemap pour reperer les tuiles navigables
         tiles = new Dictionary<Vector2, Tile>();
-
+        
         for (int x = 0; x < gridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
@@ -113,73 +126,75 @@ public class Pathfinding : MonoBehaviour
                     Vector2 gridPos = new Vector2(x, y);
                     Tile tile = new Tile();
                     tile.position = gridPos;
+                    tile.distanceFromStart = Mathf.Infinity;
+                    tile.estimatedDistanceToEnd = Mathf.Infinity;
+                    tile.totalEstimatedDistance = Mathf.Infinity;
+                    // Mathf.Infinity (ramplace float.MaxValue et "null" qu'on ne peut pas mettre a un float (si j'ai bien compris))
                     tiles.Add(gridPos, tile);
                 }
             }
         }
-
-        // Debug.Log($"Taille max: {gridWidth * gridHeight} | Tiles générées: {tiles.Count}");
- 
     }
- 
-
+    
+    
     private void FindPath(Vector2 startPos, Vector2 endPos)
     {
-        Debug.Log("FindPath");
         tilesToSearch = new List<Vector2> { startPos };
-        searchedTiles = new List<Vector2>();
-        finalPath = new List<Vector2>();
- 
-        
+        // A explorer
+        searchedTiles = new List<Vector2>(); 
+        // Deja explorées
+        finalPathFind = new List<Vector2>(); 
+    
         tiles[startPos].distanceFromStart = 0;
         tiles[startPos].estimatedDistanceToEnd = Vector2.Distance(startPos, endPos);
-        tiles[startPos].totalEstimatedDistance = Vector2.Distance(startPos, endPos);
-           
- 
-        
+        tiles[startPos].totalEstimatedDistance = tiles[startPos].estimatedDistanceToEnd;
+        // Pas claire ....
+
         while (tilesToSearch.Count > 0)
         {
-           
             Vector2 tileToSearch = tilesToSearch[0];
+            // Choisi la tuile avec la plus petit valeur
+
+            // Toujour pas clair...
             foreach (Vector2 pos in tilesToSearch)
             {
                 Tile t = tiles[pos];
                 if (t.totalEstimatedDistance < tiles[tileToSearch].totalEstimatedDistance ||
                     (t.totalEstimatedDistance == tiles[tileToSearch].totalEstimatedDistance &&
-                     t.estimatedDistanceToEnd < tiles[tileToSearch].estimatedDistanceToEnd))
+                    t.estimatedDistanceToEnd < tiles[tileToSearch].estimatedDistanceToEnd))
                 {
                     tileToSearch = pos;
                 }
             }
- 
+
+            // La tuile passe de "A explorer" a " Deja explorer"
             tilesToSearch.Remove(tileToSearch);
             searchedTiles.Add(tileToSearch);
- 
+
+            // Si la destination est atteind, on cree un nouveau chemin
             if (tileToSearch == endPos)
             {
                 Tile pathTile = tiles[endPos];
 
                 while (pathTile.position != startPos)
                 {
-                    finalPath.Add(pathTile.position);
+                    finalPathFind.Add(pathTile.position);
                     pathTile = tiles[pathTile.connection];
-                    
                 }
-
-                finalPath.Add(startPos);
-                VisualiseText();
- 
-                Debug.Log($"Chemin trouvé ! Longueur : {finalPath.Count}");
-
+                finalPathFind.Add(startPos);
+                finalPathFind.Reverse();
+                // Met le chemin dans le bon sens et non c'est pas claire.....
+                Debug.Log($"Chemin trouvé ! Longueur : {finalPathFind.Count}");
                 return;
             }
- 
+
+            // exploration des tuiles voisines
             SearchTileNeighbors(tileToSearch, endPos);
         }
- 
-        Debug.Log("Aucun chemin trouvé.");
+        
+         Debug.Log("Aucun chemin trouvé.");   
     }
- 
+    
     private void SearchTileNeighbors(Vector2 tilePos, Vector2 endPos)
     {
         for (float x = tilePos.x - 1; x <= tilePos.x + 1; x++)
@@ -187,19 +202,22 @@ public class Pathfinding : MonoBehaviour
             for (float y = tilePos.y - 1; y <= tilePos.y + 1; y++)
             {
                 Vector2 neighborPos = new Vector2(x, y);
- 
-                if (tiles.TryGetValue(neighborPos, out Tile neighbourTile) &&
-                    !searchedTiles.Contains(neighborPos))
+    
+                // Ignore la tuile centrale
+                if (neighborPos == tilePos) continue;
+    
+                // Si la tuile existe et n’est pas "Deja explorer"
+                if (tiles.TryGetValue(neighborPos, out Tile neighbourTile) && !searchedTiles.Contains(neighborPos))
                 {
                     float costToNeighbour = tiles[tilePos].distanceFromStart + Vector2.Distance(tilePos, neighborPos);
- 
+    
                     if (costToNeighbour < neighbourTile.distanceFromStart)
                     {
                         neighbourTile.connection = tilePos;
                         neighbourTile.distanceFromStart = costToNeighbour;
                         neighbourTile.estimatedDistanceToEnd = Vector2.Distance(neighborPos, endPos);
                         neighbourTile.totalEstimatedDistance = neighbourTile.distanceFromStart + neighbourTile.estimatedDistanceToEnd;
-
+    
                         if (!tilesToSearch.Contains(neighborPos))
                         {
                             tilesToSearch.Add(neighborPos);
@@ -210,42 +228,41 @@ public class Pathfinding : MonoBehaviour
             }
         }
     }
-    private void VisualiseText()
+    
+    
+    private IEnumerator FollowPath()
     {
-        foreach (Transform child in textParent)
+        // Tant qu’il y a un chemin et que le player est poursuivi
+        foreach (Vector2 step in finalPathFind)
         {
-            Destroy(child.gameObject);
-        }
-
-        foreach (Vector2 pos in tiles.Keys)
-        {
-            Transform text = Instantiate(textPrefab, pos + (Vector2)transform.position, new Quaternion(), textParent);
-            text.GetChild(0).GetComponent<Text>().text = tiles[pos].distanceFromStart.ToString();       
-            text.GetChild(1).GetComponent<Text>().text = tiles[pos].estimatedDistanceToEnd.ToString();   
-            text.GetChild(2).GetComponent<Text>().text = tiles[pos].totalEstimatedDistance.ToString();   
+            // Conversion en position monde (toujour pas clair...)
+            Vector3 targetWorldPos = groundTilemap.CellToWorld(new Vector3Int((int)step.x + groundTilemap.origin.x, (int)step.y + groundTilemap.origin.y, 0)) + (Vector3)groundTilemap.cellSize / 2f;
+    
+            // Avance vers le point jusqu’à être proche
+            while (Vector2.Distance(nightmare.position, targetWorldPos) > 0.05f)
+            {
+                // Si le player sort de la zone, on arrête
+                if (!isChasing) yield break;
+    
+                nightmare.position = Vector2.MoveTowards(nightmare.position, targetWorldPos, speedMovement * Time.deltaTime);
+                yield return null; 
+                // Attendre le prochain frame
+            }
         }
     }
     
-     private void OnDrawGizmos()
+    
+    private void OnDrawGizmos()
     {
-        if (!visualiseGrid || tiles == null)
-        {
-            return;
-        }
-
+        if (!visualiseGrid || tiles == null) return;
+    
         foreach (KeyValuePair<Vector2, Tile> kvp in tiles)
         {
-
-            if (finalPath.Contains(kvp.Key))
-            {
-                Gizmos.color = Color.magenta;
-            }
-
-            float gizmoSize = showTexts ? 0.2f : 1;
-
+            if (finalPathFind != null && finalPathFind.Contains(kvp.Key)) Gizmos.color = Color.magenta;
+            else Gizmos.color = Color.gray;
+    
+            float gizmoSize = showTexts ? 0.2f : 1f;
             Gizmos.DrawCube(kvp.Key + (Vector2)transform.position, new Vector3(tileWidth, tileHeight) * gizmoSize);
         }
     }
-
-
 }
