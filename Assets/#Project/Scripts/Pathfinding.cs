@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections;
-using UnityEngine.UI;
 
 public class Pathfinding : MonoBehaviour {
     [SerializeField] private bool newCaculPath;
@@ -13,14 +12,12 @@ public class Pathfinding : MonoBehaviour {
     [SerializeField] private int tileHeight = 1;
     [SerializeField] private Tilemap groundTilemap;
     private Dictionary<Vector2, Tile> tiles;
-    // Tuiles navigables
+    // Tuiles praticable
     private List<Vector2> tilesToSearch;
     // Liste ouverte (a explorer)
     private List<Vector2> searchedTiles;
     // Liste fermer (deja explorées)
     private List<Vector2> finalPathFind;
-    
-
 
     public Transform nightmare;
     public Transform player;
@@ -33,12 +30,9 @@ public class Pathfinding : MonoBehaviour {
     private Coroutine followCoroutine; 
     // Coroutine qui active le deplacement
     
-
     [SerializeField] private bool visualiseGrid;
     [SerializeField] private bool showTexts;
-    [SerializeField] private Transform textPrefab;
-    [SerializeField] private Transform textParent; 
-    
+
     
     void Awake()
     {
@@ -47,11 +41,17 @@ public class Pathfinding : MonoBehaviour {
         // Recupere la taille de la tilemap
     }
     
-    
     private void Update()
     {
+        tiles = new Dictionary<Vector2, Tile>();
+        Vector3Int playerGridPos = groundTilemap.layoutGrid.WorldToCell(player.position) - groundTilemap.origin;
+        Vector3Int nightmareGridPos = groundTilemap.layoutGrid.WorldToCell(nightmare.position) - groundTilemap.origin;
+        // Conversion des positions monde en positions cellules (pas encore tres claire...)
+
+        CaculPath(new Vector2(nightmareGridPos.x, nightmareGridPos.y), new Vector2(playerGridPos.x, playerGridPos.y));
+                
         if (player == null || nightmare == null) return;
-        // verification d'assignation
+        // Verification d'assignation
 
         float distanceBetweenPlayerNightmare = Vector2.Distance(nightmare.position, player.position);
 
@@ -60,8 +60,8 @@ public class Pathfinding : MonoBehaviour {
         {
             isChasing = true;
             newCaculPath = true;
-
         }
+
         // Playeur sort de la zone de poursuite
         else if (isChasing && distanceBetweenPlayerNightmare > distanceStopChase)
         {
@@ -76,23 +76,12 @@ public class Pathfinding : MonoBehaviour {
             }
         }
     
-    
-        // COMPREND PAS tout, faut decoriquer plus !!!!!!!!!!!
         if (isChasing)
         {
-            // Un nouveau chemin doit etre calculer
+            
             if (newCaculPath && !pathGenerated)
             {
                 GenerateGrid(); 
-                // Reconstruit la grille a partir de la tilemap
-                
-                Vector3Int playerGridPos = groundTilemap.layoutGrid.WorldToCell(player.position) - groundTilemap.origin;
-                Vector3Int nightmareGridPos = groundTilemap.layoutGrid.WorldToCell(nightmare.position) - groundTilemap.origin;
-                // Conversion des positions monde en cellules (pas encore tres claire...)
-
-                FindPath(new Vector2(nightmareGridPos.x, nightmareGridPos.y), new Vector2(playerGridPos.x, playerGridPos.y));
-                // Calcul du chemin A* (pas claire non plus....)
-
                 
                 if (finalPathFind != null && finalPathFind.Count > 0)
                 {
@@ -104,6 +93,7 @@ public class Pathfinding : MonoBehaviour {
                 newCaculPath = false;
                 pathGenerated = true;
             }
+            
             else if (!newCaculPath)
             {
                 pathGenerated = false;
@@ -111,19 +101,27 @@ public class Pathfinding : MonoBehaviour {
         }
     }
     
-    
+    // Suis pas en paix avec cette fonction la...
     private void GenerateGrid()
     {
-        // Parcourt toutes les cellules de la tilemap pour reperer les tuiles navigables
-        tiles = new Dictionary<Vector2, Tile>();
+        tiles.Clear();
+        // Parcourt toutes les cellules de la tilemap pour reperer les tuiles praticable
+
+        Vector3Int origin = groundTilemap.origin;
+        Vector3Int size = groundTilemap.size;
+        //Origine de la tilmap
         
-        for (int x = 0; x < gridWidth; x++)
+        for (int x = 0; x < size.x; x++)
         {
-            for (int y = 0; y < gridHeight; y++)
+            for (int y = 0; y < size.y; y++)
             {
+                Vector3Int cellPos = new Vector3Int(origin.x + x, origin.y + y, 0);
+                //calcul la position reel de la tuile dans la grille 
+
                 if (groundTilemap.HasTile(new Vector3Int(x, y, 0)))
                 {
-                    Vector2 gridPos = new Vector2(x, y);
+                    Vector2 gridPos = new Vector2(cellPos.x, cellPos.y);
+                    // Vector2 gridPos = new Vector2(x, y);
                     Tile tile = new Tile();
                     tile.position = gridPos;
                     tile.distanceFromStart = Mathf.Infinity;
@@ -136,20 +134,21 @@ public class Pathfinding : MonoBehaviour {
         }
     }
     
-    
-    private void FindPath(Vector2 startPos, Vector2 endPos)
+    private void CaculPath(Vector2 startPos, Vector2 endPos)
     {
         tilesToSearch = new List<Vector2> { startPos };
         // A explorer
-        searchedTiles = new List<Vector2>(); 
+        searchedTiles = new List<Vector2>();
         // Deja explorées
-        finalPathFind = new List<Vector2>(); 
-    
+        finalPathFind = new List<Vector2>();
+
+        Debug.Log($"tiles: {tiles}");
         tiles[startPos].distanceFromStart = 0;
         tiles[startPos].estimatedDistanceToEnd = Vector2.Distance(startPos, endPos);
         tiles[startPos].totalEstimatedDistance = tiles[startPos].estimatedDistanceToEnd;
         // Pas claire ....
 
+        // A explorer
         while (tilesToSearch.Count > 0)
         {
             Vector2 tileToSearch = tilesToSearch[0];
@@ -182,7 +181,7 @@ public class Pathfinding : MonoBehaviour {
                     pathTile = tiles[pathTile.connection];
                 }
                 finalPathFind.Add(startPos);
-                finalPathFind.Reverse();
+                // finalPathFind.Reverse();
                 // Met le chemin dans le bon sens et non c'est pas claire.....
                 Debug.Log($"Chemin trouvé ! Longueur : {finalPathFind.Count}");
                 return;
@@ -238,15 +237,15 @@ public class Pathfinding : MonoBehaviour {
             // Conversion en position monde (toujour pas clair...)
             Vector3 targetWorldPos = groundTilemap.CellToWorld(new Vector3Int((int)step.x + groundTilemap.origin.x, (int)step.y + groundTilemap.origin.y, 0)) + (Vector3)groundTilemap.cellSize / 2f;
     
-            // Avance vers le point jusqu’à être proche
+            // Avance vers le point jusqua O.O5f
             while (Vector2.Distance(nightmare.position, targetWorldPos) > 0.05f)
             {
-                // Si le player sort de la zone, on arrête
+                // Si le player sort de la zone de poursuite, on arrete la coroutine
                 if (!isChasing) yield break;
     
                 nightmare.position = Vector2.MoveTowards(nightmare.position, targetWorldPos, speedMovement * Time.deltaTime);
                 yield return null; 
-                // Attendre le prochain frame
+                // Ok je comprend pas grand chose...
             }
         }
     }
