@@ -3,22 +3,25 @@ using System.Collections.Generic;
 using UnityEngine.Tilemaps;
 using UnityEngine;
 using System;
+using System.Text.RegularExpressions;
 
 
 struct TileData
 {
-    public int distance;
+    public float distance;
     public int step;
     public Vector3Int position;
+    public Vector3Int from;
 
-    public TileData(Vector3Int position, int distance, int step)
+    public TileData(Vector3Int position, Vector3Int from, float distance, int step)
     {
         this.position = position;
+        this.from = from;
         this.step = step;
         this.distance = distance;
     }
 
-    public readonly int Cost => distance + step;
+    public readonly float Cost => distance + step;
 
     public bool Equals(TileData other)
     {
@@ -34,14 +37,17 @@ public class PathFindingNew : MonoBehaviour
     Dictionary<Vector3Int, TileData> pathTilesData = new();
     List<TileData> toExplore = new();
     List<Vector3Int> allReadyCheck = new();
-    List<Vector3Int> path = new();
+    public List<Vector3Int> path = new();
+
+    [SerializeField] bool debug;
 
 
     public void Start()
     {
         GeneratePath();
     }
-    public void GeneratePath()
+
+    public bool GeneratePath()
     {
         // clear data
         toExplore.Clear();
@@ -52,19 +58,37 @@ public class PathFindingNew : MonoBehaviour
         Vector3Int destination = tilemap.layoutGrid.WorldToCell(player.position);
         Vector3Int begin = tilemap.layoutGrid.WorldToCell(transform.position); // sa propre position  
 
-        if (CollectData(begin, destination) == false)
-        {
-            Debug.LogWarning("No path found.");
-        }
-        else
+        if (CollectData(begin, destination))
         {
             Debug.Log("Path found :D");
+            CreatePath(begin, destination);
+            Debug.Log($"Path count: {path.Count}");
+            return true;
+
         }
+   
+        Debug.LogWarning("No path found.");
+        return false;
+        
+    }
+
+    private void CreatePath(Vector3Int begin, Vector3Int destination)
+    {
+
+        Vector3Int currentPosition = destination;
+        
+        while(currentPosition != begin)
+        {
+        path.Add(currentPosition);
+        currentPosition = pathTilesData[currentPosition].from;     
+        }
+        path.Reverse();
+
     }
 
     private bool CollectData(Vector3Int begin, Vector3Int destination)
     {
-        TileData firstTileData = new TileData(begin, ManathanDistance(begin, destination), 0);
+        TileData firstTileData = new TileData(begin, begin, Vector3Int.Distance(begin, destination), 0);
         toExplore.Add(firstTileData);
 
         while (toExplore.Count != 0)
@@ -83,8 +107,8 @@ public class PathFindingNew : MonoBehaviour
                     Vector3Int positionTileArround = tile.position + new Vector3Int(x, y, 0);
 
                     if (!tilemap.HasTile(positionTileArround)) continue;
-                    int distance = ManathanDistance(positionTileArround, destination);
-                    TileData tileArround = new(positionTileArround, distance, tile.step + 1);
+                    float distance = Vector3Int.Distance(positionTileArround, destination);
+                    TileData tileArround = new(positionTileArround, tile.position, distance, tile.step + 1);
 
                     if (pathTilesData.ContainsKey(positionTileArround))
                     {
@@ -123,10 +147,7 @@ public class PathFindingNew : MonoBehaviour
         }
         return lowestCost;
     }
-    
-    private int ManathanDistance(Vector3Int a, Vector3Int b)
-    {
-        return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y) + Mathf.Abs(a.z - b.z);
-    }
 
+    public Vector2 NextDestination => tilemap.CellToWorld(path[0]);
+    
 }

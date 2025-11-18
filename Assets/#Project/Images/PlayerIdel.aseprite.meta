@@ -125,15 +125,15 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: PlayerIdel
     originalName: 
-    pivot: {x: 0.5, y: -0.25}
-    alignment: 9
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
     rect:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 164
+      width: 20
       height: 32
     spriteID: 29d03516bbaf1954b8ea1cba58624b90
     spriteBone: []

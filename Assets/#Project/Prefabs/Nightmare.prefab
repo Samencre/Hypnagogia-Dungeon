@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 592662575418360432}
   - component: {fileID: -3041430653606091107}
   - component: {fileID: 4032809557486154650}
-  - component: {fileID: 397146162596681137}
   - component: {fileID: -888845778027207292}
   - component: {fileID: -5962534898150269867}
   m_Layer: 8
@@ -81,8 +80,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 8643256057468002053, guid: 037020bf7d900f04a909bbd2f5be0065, type: 3}
+  m_Color: {r: 0.16981131, g: 0.14658241, b: 0.14658241, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -155,24 +154,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &397146162596681137
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5112148080668412031}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51c231672130d0e4492e6f9d5b728181, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  chase: 5
-  stop: 6
-  speed: 2
-  space: 1
-  rb: {fileID: -3041430653606091107}
 --- !u!114 &-888845778027207292
 MonoBehaviour:
   m_ObjectHideFlags: 0
